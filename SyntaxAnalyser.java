@@ -17,24 +17,16 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
     @Override
     public void acceptTerminal(int symbol) throws IOException, CompilationException
     {
-
-    }
-
-    @Override
-    public void parse(PrintStream ps) throws IOException
-    {
-        myGenerate = new Generate();
-        try
+        Token t = nextToken;
+        //Compare the symbol against the expected symbol
+        if(symbol == t.symbol)
         {
+            myGenerate.insertTerminal(nextToken);
+            //Collect the next token
             nextToken = lex.getNextToken();
-            _statementPart_();
-            acceptTerminal(Token.eofSymbol);
-            myGenerate.reportSuccess();
+            return;
         }
-        catch (CompilationException ex)
-        {
-            ps.println("Compilation Exception");
-            ps.println(ex.toTraceString());
-        }
+        //If there is an issue where the symbol doesnt match the expected symbol, an error is reported with the expected and given symbols
+        myGenerate.reportError(nextToken, "expected: " + Token.getName(symbol) + " but has: " + Token.getName(nextToken.symbol));
     }
 }
