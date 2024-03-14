@@ -1,5 +1,5 @@
 // author Stephen Middlemass
-import java.io.*;
+import java.io.IOException;
 
 public class SyntaxAnalyser extends AbstractSyntaxAnalyser
 {
