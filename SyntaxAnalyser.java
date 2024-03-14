@@ -231,7 +231,33 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
 
     private void condition() throws CompilationException, IOException
     {
+        //identifier <conditional operator> identifier | identifier <conditional operator> numberConstant | identifier <conditional operator> stringConstant
+        //identifier <conditional operator> identifier|numberConstant|stringConstant
         myGenerate.commenceNonterminal("Condition");
+
+        //identifier
+        acceptTerminal(Token.identifier);
+
+        //<conditional operator>
+        conditionalOperator();
+
+        //identifier|numberConstant|stringConstant
+        switch(nextToken.symbol)
+        {
+            //identifier
+            case Token.identifier:
+                acceptTerminal(Token.identifier);
+                break;
+            //numberConstant
+            case Token.numberConstant:
+                acceptTerminal(Token.identifier);
+                break;
+            //stringConstant
+            case Token.stringConstant:
+                acceptTerminal(Token.stringConstant);
+                break;
+            default:
+        }
 
         myGenerate.finishNonterminal("Condition");
     }
