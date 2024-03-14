@@ -13,7 +13,6 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
    
     private String errorMessage(String expectedTokens, Token token)
     {
-        
         return "line " + token.lineNumber + "from " + filename.substring(filename.lastIndexOf('/') + 1) + ": Expected " + expectedTokens + "but found (" + Token.getName(token.symbol) + ").\n";
     }
 
@@ -34,9 +33,8 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
     @Override
     public void acceptTerminal(int symbol) throws IOException, CompilationException
     {
-        Token t = nextToken;
         //Compare the symbol against the expected symbol
-        if(symbol == t.symbol)
+        if(symbol == nextToken.symbol)
         {
             myGenerate.insertTerminal(nextToken);
             //Collect the next token
@@ -44,7 +42,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
             return;
         }
         //If there is an issue where the symbol doesnt match the expected symbol, an error is reported with the expected and given symbols
-        myGenerate.reportError(nextToken, "expected: " + Token.getName(symbol) + " but has: " + Token.getName(nextToken.symbol));
+        myGenerate.reportError(nextToken, errorMessage(Token.getName(symbol), nextToken));
     }
 
     private void statementList() throws CompilationException, IOException
@@ -54,7 +52,9 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         myGenerate.commenceNonterminal("StatementList");
 
         //<statement>
-        statement();
+        try{statement();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("Statement", nextToken), ex);}
 
         //<statement list> ;
         while(nextToken.symbol == Token.semicolonSymbol)
@@ -63,7 +63,9 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
             acceptTerminal(Token.semicolonSymbol);
 
             //<statement>
-            statement();
+            try{statement();}
+            catch(CompilationException ex)
+            {throw new CompilationException(errorMessage("Statement", nextToken), ex);}
         }
 
         myGenerate.finishNonterminal("StatementList");
@@ -76,32 +78,42 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         myGenerate.commenceNonterminal("Statement");
 
         //|
-        switch(nextToken.symbol)
+        try
         {
-            //<assignment statement>
-            case Token.identifier:
-                assignmentStatement();
-                break;
-            //<if statement>
-            case Token.ifSymbol:
-                ifStatement();
-                break;
-            //<while statement>
-            case Token.whileSymbol:
-                whileStatement();
-                break;
-            //<procedure statement>
-            case Token.procedureSymbol:
-                procedureStatement();
-                break;
-            //<until statement>
-            case Token.untilSymbol:
-                untilStatement();
-                break;
-            case Token.forSymbol:
-                forStatement();
-                break;
-            default:
+            switch(nextToken.symbol)
+            {
+                //<assignment statement>
+                case Token.identifier:
+                    assignmentStatement();
+                    break;
+                //<if statement>
+                case Token.ifSymbol:
+                    ifStatement();
+                    break;
+                //<while statement>
+                case Token.whileSymbol:
+                    whileStatement();
+                    break;
+                //<procedure statement>
+                case Token.procedureSymbol:
+                    procedureStatement();
+                    break;
+                //<until statement>
+                case Token.untilSymbol:
+                    untilStatement();
+                    break;
+                //<for statement>
+                case Token.forSymbol:
+                    forStatement();
+                    break;
+                default:
+                    myGenerate.reportError(nextToken, errorMessage("AssignmentStatement, IfStatement, WhileStatement, ProcedureStatement, UntilStatement or ForStatement", nextToken));
+                    break;
+            }
+        }
+        catch(CompilationException ex)
+        {
+            throw new CompilationException(errorMessage("AssignmentStatement, IfStatement, WhileStatement, ProcedureStatement, UntilStatement or ForStatement", nextToken), ex);
         }
 
         myGenerate.finishNonterminal("Statement");
@@ -129,7 +141,9 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         else
         {
             //<expression>
-            expression();
+            try{expression();}
+            catch(CompilationException ex)
+            {throw new CompilationException(errorMessage("ExpressionStatement", nextToken), ex);}
         }
 
         myGenerate.finishNonterminal("AssignmentStatement");
@@ -145,19 +159,25 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         acceptTerminal(Token.ifSymbol);
 
         //<condition>
-        condition();
+        try{condition();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("ConditionStatement", nextToken), ex);}
 
         //then
         acceptTerminal(Token.thenSymbol);
 
         //<statement list>
-        statementList();
+        try{statementList();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("StatementList", nextToken), ex);}
 
         //else
         acceptTerminal(Token.elseSymbol);
 
         //<statement list>
-        statementList();
+        try{statementList();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("StatementList", nextToken), ex);}
 
         //end
         acceptTerminal(Token.endSymbol);
@@ -177,13 +197,17 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         acceptTerminal(Token.whileSymbol);
 
         //<condition>
-        condition();
+        try{condition();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("ConditionStatement", nextToken), ex);}
 
         //loop
         acceptTerminal(Token.loopSymbol);
 
         //<statement list>
-        statementList();
+        try{statementList();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("StatementList", nextToken), ex);}
 
         //end
         acceptTerminal(Token.endSymbol);
@@ -210,7 +234,9 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         acceptTerminal(Token.leftParenthesis);
 
         //<argument list>
-        argumentList();
+        try{argumentList();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("ArgumentList", nextToken), ex);}
 
         //)
         acceptTerminal(Token.rightParenthesis);
@@ -228,13 +254,17 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         acceptTerminal(Token.doSymbol);
 
         //<statement list>
-        statementList();
+        try{statementList();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("StatementList", nextToken), ex);}
 
         //until
         acceptTerminal(Token.untilSymbol);
 
         //<condition>
-        condition();
+        try{condition();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("Condition Statement", nextToken), ex);}
 
         myGenerate.finishNonterminal("UntilStatement");
     }
@@ -252,19 +282,25 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         acceptTerminal(Token.leftParenthesis);
 
         //<assignment statement>
-        assignmentStatement();
+        try{assignmentStatement();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("AssignmentStatement", nextToken), ex);}
 
         //;
         acceptTerminal(Token.semicolonSymbol);
 
         //<condition>
-        condition();
+        try{condition();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("ConditionStatement", nextToken), ex);}
 
         //;
         acceptTerminal(Token.semicolonSymbol);
 
         //<assignment statement>
-        assignmentStatement();
+        try{assignmentStatement();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("AssignmentStatement", nextToken), ex);}
         
         //)
         acceptTerminal(Token.rightParenthesis);
@@ -273,7 +309,9 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         acceptTerminal(Token.doSymbol);
 
         //<statement list>
-        statementList();
+        try{statementList();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("StatementList", nextToken), ex);}
 
         //end
         acceptTerminal(Token.endSymbol);
@@ -316,7 +354,9 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         acceptTerminal(Token.identifier);
 
         //<conditional operator>
-        conditionalOperator();
+        try{conditionalOperator();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("ConditionalOperator", nextToken), ex);}
 
         //identifier|numberConstant|stringConstant
         switch(nextToken.symbol)
@@ -385,7 +425,9 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         myGenerate.commenceNonterminal("Expression");
 
         //<term>
-        term();
+        try{term();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("Term", nextToken), ex);}
 
         //+|-
         while(nextToken.symbol == Token.plusSymbol | nextToken.symbol == Token.minusSymbol)
@@ -394,7 +436,9 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
             acceptTerminal(nextToken.symbol);
 
             //<term>
-            term();
+            try{term();}
+            catch(CompilationException ex)
+            {throw new CompilationException(errorMessage("Term", nextToken), ex);}
         }
 
         myGenerate.finishNonterminal("Expression");
@@ -408,7 +452,9 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         myGenerate.commenceNonterminal("Term");
 
         //<factor>
-        factor();
+        try{factor();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("Factor", nextToken), ex);}
 
         //*|/
         while(nextToken.symbol == Token.timesSymbol | nextToken.symbol == Token.divideSymbol)
@@ -417,7 +463,9 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
             acceptTerminal(nextToken.symbol);
 
             //<factor
-            factor();
+            try{factor();}
+            catch(CompilationException ex)
+            {throw new CompilationException(errorMessage("Factor", nextToken), ex);}
         }
 
         myGenerate.finishNonterminal("Term");
@@ -446,6 +494,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
                 expression();
                 acceptTerminal(Token.rightParenthesis);
             default:
+                myGenerate.reportError(nextToken, errorMessage("Identifier, Number, Expression", nextToken));
         }
 
         myGenerate.finishNonterminal("Factor");
