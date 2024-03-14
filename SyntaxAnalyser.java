@@ -461,7 +461,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         {throw new CompilationException(errorMessage("Factor", nextToken), ex);}
 
         //*|/
-        while(nextToken.symbol == Token.timesSymbol | nextToken.symbol == Token.divideSymbol)
+        while(nextToken.symbol == Token.timesSymbol || nextToken.symbol == Token.divideSymbol)
         {
             //*|/
             acceptTerminal(nextToken.symbol);
