@@ -39,71 +39,71 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
 
     private void statementList() throws CompilationException, IOException
     {
-
+        myGenerate.commenceNonterminal("StatementList");
     }
 
     private void statement() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("Statement");
     }
 
-    private void assignment() throws CompilationException, IOException
+    private void assignmentStatement() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("AssignmentStatement");
     }
 
-    private void ifStructure() throws CompilationException, IOException
+    private void ifStatement() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("IfStatement");
     }
 
-    private void whileStructure() throws CompilationException, IOException
+    private void whileStatement() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("WhileStatement");
     }
 
-    private void procedureStructure() throws CompilationException, IOException
+    private void procedureStatement() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("ProcedureStatement");
     }
 
-    private void untilStructure() throws CompilationException, IOException
+    private void untilStatement() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("UntilStatement");
     }
 
-    private void forStructure() throws CompilationException, IOException
+    private void forStatement() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("ForStatement");
     }
 
     private void argumentList() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("ArgumentList");
     }
 
     private void condition() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("Condition");
     }
 
     private void conditionalOperator() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("ConditionalOperator");
     }
 
     private void expression() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("Expressiono");
     }
 
     private void term() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("Term");
     }
 
     private void factor() throws CompilationException, IOException
     {
-        
+        myGenerate.commenceNonterminal("Factor");
     }
 }
