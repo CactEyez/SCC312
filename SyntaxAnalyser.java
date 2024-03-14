@@ -371,7 +371,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
                 break;
             //numberConstant
             case Token.numberConstant:
-                acceptTerminal(Token.identifier);
+                acceptTerminal(Token.numberConstant);
                 break;
             //stringConstant
             case Token.stringConstant:
