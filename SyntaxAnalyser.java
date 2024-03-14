@@ -39,21 +39,88 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
 
     private void statementList() throws CompilationException, IOException
     {
+        //<statement> | <statement list> ; <statement>
+        
         myGenerate.commenceNonterminal("StatementList");
+
+        //<statement>
+        statement();
+
+        //<statement list> ;
+        while(nextToken.symbol == Token.semicolonSymbol)
+        {
+            //;
+            acceptTerminal(Token.semicolonSymbol);
+
+            //<statement>
+            statement();
+        }
 
         myGenerate.finishNonterminal("StatementList");
     }
 
     private void statement() throws CompilationException, IOException
     {
+        //<assignment statement> | <if statement> | <while statement> | <procedure statement> | <until statement> | <for statement>
+
         myGenerate.commenceNonterminal("Statement");
+
+        //|
+        switch(nextToken.symbol)
+        {
+            //<assignment statement>
+            case Token.identifier:
+                assignmentStatement();
+                break;
+            //<if statement>
+            case Token.ifSymbol:
+                ifStatement();
+                break;
+            //<while statement>
+            case Token.whileSymbol:
+                whileStatement();
+                break;
+            //<procedure statement>
+            case Token.procedureSymbol:
+                procedureStatement();
+                break;
+            //<until statement>
+            case Token.untilSymbol:
+                untilStatement();
+                break;
+            case Token.forSymbol:
+                forStatement();
+                break;
+            default:
+        }
 
         myGenerate.finishNonterminal("Statement");
     }
 
     private void assignmentStatement() throws CompilationException, IOException
     {
+        //identifier := <expression> | identifier := stringConstant
+        //              <expression>|stringConstant
+        
         myGenerate.commenceNonterminal("AssignmentStatement");
+
+        //identifier
+        acceptTerminal(Token.identifier);
+
+        //:=
+        acceptTerminal(Token.becomesSymbol);
+
+        //<expression>|stringConstant -> check stringConstant first because it can be validated with a simple '=='
+        if(nextToken.symbol == Token.stringConstant)
+        {
+            //stringConstant
+            acceptTerminal(Token.stringConstant);
+        }
+        else
+        {
+            //<expression>
+            expression();
+        }
 
         myGenerate.finishNonterminal("AssignmentStatement");
     }
