@@ -24,6 +24,10 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         //This is the start of the list of statements
         acceptTerminal(Token.beginSymbol);
 
+        try{statementList();}
+        catch(CompilationException ex)
+        {throw new CompilationException(errorMessage("StatementList", nextToken), ex);}
+
         //This is the end
         acceptTerminal(Token.endSymbol);
 
