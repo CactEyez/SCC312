@@ -99,7 +99,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
                     whileStatement();
                     break;
                 //<procedure statement>
-                case Token.procedureSymbol:
+                case Token.callSymbol:
                     procedureStatement();
                     break;
                 //<until statement>
