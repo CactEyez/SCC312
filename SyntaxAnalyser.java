@@ -60,7 +60,30 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
 
     private void ifStatement() throws CompilationException, IOException
     {
+        //if <condition> then <statement list> end if | if <condition> then <statement list> else <statement list> end if
+
         myGenerate.commenceNonterminal("IfStatement");
+        
+        //if
+        acceptTerminal(Token.ifSymbol);
+
+        //<condition>
+        condition();
+
+        //then
+        acceptTerminal(Token.thenSymbol);
+
+        //<statement list>
+        statementList();
+
+        //else
+        acceptTerminal(Token.elseSymbol);
+
+        //<statement list>
+        statementList();
+
+        acceptTerminal(Token.endSymbol);
+        acceptTerminal(Token.loopSymbol);
 
         myGenerate.finishNonterminal("IfStatement");
     }
