@@ -302,21 +302,74 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
 
     private void expression() throws CompilationException, IOException
     {
+        //<term> | <expression> + <term> | <expression> - <term>
+        //         <expression> +|- <term>
+        
         myGenerate.commenceNonterminal("Expression");
+
+        //<term>
+        term();
+
+        //+|-
+        while(nextToken.symbol == Token.plusSymbol | nextToken.symbol == Token.minusSymbol)
+        {
+            //+|-
+            acceptTerminal(nextToken.symbol);
+
+            //<term>
+            term();
+        }
 
         myGenerate.finishNonterminal("Expression");
     }
 
     private void term() throws CompilationException, IOException
     {
+        //<factor> | <term> * <factor> | <term> / <factor>
+        //           <term> *|/ <factor>
+        
         myGenerate.commenceNonterminal("Term");
+
+        //<factor>
+        factor();
+
+        //*|/
+        while(nextToken.symbol == Token.timesSymbol | nextToken.symbol == Token.divideSymbol)
+        {
+            //*|/
+            acceptTerminal(nextToken.symbol);
+
+            //<factor
+            factor();
+        }
 
         myGenerate.finishNonterminal("Term");
     }
 
     private void factor() throws CompilationException, IOException
     {
+        //identifier | numberConstant | ( <expression> )
+
         myGenerate.commenceNonterminal("Factor");
+
+        //|
+        switch(nextToken.symbol)
+        {
+            //indentifier
+            case Token.identifier:
+                acceptTerminal(Token.identifier);
+                break;
+            //numberConstant
+            case Token.numberConstant:
+                acceptTerminal(Token.numberConstant);
+                break;
+            //( <expression> )
+            case Token.leftParenthesis:
+                acceptTerminal(Token.leftParenthesis);
+                expression();
+                acceptTerminal(Token.rightParenthesis);
+            default:
+        }
 
         myGenerate.finishNonterminal("Factor");
     }
