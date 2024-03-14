@@ -82,22 +82,61 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         //<statement list>
         statementList();
 
+        //end
         acceptTerminal(Token.endSymbol);
-        acceptTerminal(Token.loopSymbol);
+
+        acceptTerminal(Token.ifSymbol);
 
         myGenerate.finishNonterminal("IfStatement");
     }
 
     private void whileStatement() throws CompilationException, IOException
     {
+        //while <condition> loop <statement list> end loop
+        
         myGenerate.commenceNonterminal("WhileStatement");
+
+        //while
+        acceptTerminal(Token.whileSymbol);
+
+        //<condition>
+        condition();
+
+        //loop
+        acceptTerminal(Token.loopSymbol);
+
+        //<statement list>
+        statementList();
+
+        //end
+        acceptTerminal(Token.endSymbol);
+
+        //loop
+        acceptTerminal(Token.loopSymbol);
 
         myGenerate.finishNonterminal("WhileStatement");
     }
 
     private void procedureStatement() throws CompilationException, IOException
     {
+        //call identifier ( <argument list> )
+
         myGenerate.commenceNonterminal("ProcedureStatement");
+
+        //call
+        acceptTerminal(Token.callSymbol);
+
+        //identifier
+        acceptTerminal(Token.identifier);
+
+        //(
+        acceptTerminal(Token.leftParenthesis);
+
+        //<argument list>
+        argumentList();
+
+        //)
+        acceptTerminal(Token.rightParenthesis);
 
         myGenerate.finishNonterminal("ProcedureStatement");
     }
