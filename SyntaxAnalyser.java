@@ -143,21 +143,88 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
 
     private void untilStatement() throws CompilationException, IOException
     {
+        //do <statement list> until <condition>
+
         myGenerate.commenceNonterminal("UntilStatement");
+
+        //do
+        acceptTerminal(Token.doSymbol);
+
+        //<statement list>
+        statementList();
+
+        //until
+        acceptTerminal(Token.untilSymbol);
+
+        //<condition>
+        condition();
 
         myGenerate.finishNonterminal("UntilStatement");
     }
 
     private void forStatement() throws CompilationException, IOException
     {
+        //for ( <assignment statement> ; <condition> ; <assignment statement> ) do <statement list> end loop
+
         myGenerate.commenceNonterminal("ForStatement");
+
+        //for
+        acceptTerminal(Token.forSymbol);
+
+        //(
+        acceptTerminal(Token.leftParenthesis);
+
+        //<assignment statement>
+        assignmentStatement();
+
+        //;
+        acceptTerminal(Token.semicolonSymbol);
+
+        //<condition>
+        condition();
+
+        //;
+        acceptTerminal(Token.semicolonSymbol);
+
+        //<assignment statement>
+        assignmentStatement();
+        
+        //)
+        acceptTerminal(Token.rightParenthesis);
+
+        //do
+        acceptTerminal(Token.doSymbol);
+
+        //<statement list>
+        statementList();
+
+        //end
+        acceptTerminal(Token.endSymbol);
+
+        //loop
+        acceptTerminal(Token.loopSymbol);
 
         myGenerate.finishNonterminal("ForStatement");
     }
 
     private void argumentList() throws CompilationException, IOException
     {
+        //identifier | <argument list> , identifier
+        
         myGenerate.commenceNonterminal("ArgumentList");
+
+        //identifier
+        acceptTerminal(Token.identifier);
+
+        // | ,
+        while (nextToken.symbol == Token.commaSymbol)
+        {
+            //,
+            acceptTerminal(Token.commaSymbol);
+
+            //indentifier
+            acceptTerminal(Token.identifier);
+        }
 
         myGenerate.finishNonterminal("ArgumentList");
     }
