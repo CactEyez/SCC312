@@ -46,7 +46,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
             return;
         }
         //If there is an issue where the symbol doesnt match the expected symbol, an error is reported with the expected and given symbols
-        myGenerate.reportError(nextToken, errorMessage(Token.getName(symbol), nextToken));
+        myGenerate.reportError(nextToken, "Expected: " + Token.getName(symbol));
     }
 
     private void statementList() throws CompilationException, IOException
@@ -111,7 +111,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
                     forStatement();
                     break;
                 default:
-                    myGenerate.reportError(nextToken, errorMessage("AssignmentStatement, IfStatement, WhileStatement, ProcedureStatement, UntilStatement or ForStatement", nextToken));
+                    myGenerate.reportError(nextToken, "Expected: AssignmentStatement, IfStatement, WhileStatement, ProcedureStatement, UntilStatement or ForStatement");
                     break;
             }
         }
@@ -443,8 +443,8 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
             //+|-
             acceptTerminal(nextToken.symbol);
 
-            //<term>
-            try{term();}
+            //<expression>
+            try{expression();}
             catch(CompilationException ex)
             {throw new CompilationException(errorMessage("Term", nextToken), ex);}
         }
@@ -470,7 +470,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
             //*|/
             acceptTerminal(nextToken.symbol);
 
-            //<factor>
+            //<term>
             try{term();}
             catch(CompilationException ex)
             {throw new CompilationException(errorMessage("Factor", nextToken), ex);}
