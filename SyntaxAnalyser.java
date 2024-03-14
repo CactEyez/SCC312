@@ -3,11 +3,20 @@ import java.io.IOException;
 
 public class SyntaxAnalyser extends AbstractSyntaxAnalyser
 {
-    public SyntaxAnalyser(String fileName) throws IOException
+    public String filename;
+    
+    public SyntaxAnalyser(String fName) throws IOException
     {
-        lex = new LexicalAnalyser(fileName);
+        filename = fName;
+        lex = new LexicalAnalyser(filename);
     }
    
+    private String errorMessage(String expectedTokens, Token token)
+    {
+        
+        return "line " + token.lineNumber + "from " + filename.substring(filename.lastIndexOf('/') + 1) + ": Expected " + expectedTokens + "but found (" + Token.getName(token.symbol) + ").\n";
+    }
+
     @Override
     public void _statementPart_() throws IOException, CompilationException
     {
@@ -18,6 +27,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
 
         //This is the end
         acceptTerminal(Token.endSymbol);
+
         myGenerate.finishNonterminal("StatementPart");
     }
     
