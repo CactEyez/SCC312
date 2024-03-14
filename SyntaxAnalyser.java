@@ -11,7 +11,14 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
     @Override
     public void _statementPart_() throws IOException, CompilationException
     {
+        //This is the start
+        myGenerate.commenceNonterminal("StatementPart");
+        //This is the start of the list of statements
+        acceptTerminal(Token.beginSymbol);
 
+        //This is the end
+        acceptTerminal(Token.endSymbol);
+        myGenerate.finishNonterminal("StatementPart");
     }
     
     @Override
