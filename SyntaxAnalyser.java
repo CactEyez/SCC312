@@ -264,7 +264,38 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
 
     private void conditionalOperator() throws CompilationException, IOException
     {
+        //>|>=|=|/=|<|<=
+        
         myGenerate.commenceNonterminal("ConditionalOperator");
+
+        switch(nextToken.symbol)
+        {
+            //>
+            case Token.lessThanSymbol:
+                acceptTerminal(Token.lessThanSymbol);
+                break;
+            //>=
+            case Token.lessEqualSymbol:
+                acceptTerminal(Token.lessEqualSymbol);
+                break;
+            //=
+            case Token.equalSymbol:
+                acceptTerminal(Token.equalSymbol);
+                break;
+            ///+
+            case Token.notEqualSymbol:
+                acceptTerminal(Token.notEqualSymbol);
+                break;
+            //<
+            case Token.greaterThanSymbol:
+                acceptTerminal(Token.greaterThanSymbol);
+                break;
+            //<=
+            case Token.greaterEqualSymbol:
+                acceptTerminal(Token.greaterEqualSymbol);
+                break;
+            default:
+        }
 
         myGenerate.finishNonterminal("ConditionalOperator");
     }
