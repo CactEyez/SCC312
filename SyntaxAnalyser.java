@@ -7,10 +7,13 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
     
     public SyntaxAnalyser(String fName) throws IOException
     {
+        //Saves the filename for later use
         filename = fName;
+        //Initialise the lexicalAnalyser
         lex = new LexicalAnalyser(filename);
     }
    
+    //Custom error message format for consistency
     private String errorMessage(String expectedTokens, Token token)
     {
         return "line " + token.lineNumber + " from " + filename + ": Expected " + expectedTokens + " but found (" + Token.getName(token.symbol) + ").\n";
@@ -19,18 +22,17 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
     @Override
     public void _statementPart_() throws IOException, CompilationException
     {
-        //This is the start
+        //This is the start of the compiler
         myGenerate.commenceNonterminal("StatementPart");
-        //This is the start of the list of statements
         acceptTerminal(Token.beginSymbol);
 
+        //The first statement List
         try{statementList();}
         catch(CompilationException ex)
         {throw new CompilationException(errorMessage("StatementList", nextToken), ex);}
 
-        //This is the end
+        //This is the end of the compiler
         acceptTerminal(Token.endSymbol);
-
         myGenerate.finishNonterminal("StatementPart");
     }
     
@@ -41,12 +43,12 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         if(symbol == nextToken.symbol)
         {
             myGenerate.insertTerminal(nextToken);
-            //Collect the next token
+            //Get the next token
             nextToken = lex.getNextToken();
             return;
         }
-        //If there is an issue where the symbol doesnt match the expected symbol, an error is reported with the expected and given symbols
-        myGenerate.reportError(nextToken, "Expected: " + Token.getName(symbol));
+        //If there is an issue where the symbol doesnt match the expected symbol, an error is reported with the expected and given symbols using the custom error message
+        myGenerate.reportError(nextToken, errorMessage(Token.getName(symbol), nextToken));
     }
 
     private void statementList() throws CompilationException, IOException
@@ -111,7 +113,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
                     forStatement();
                     break;
                 default:
-                    myGenerate.reportError(nextToken, "Expected: AssignmentStatement, IfStatement, WhileStatement, ProcedureStatement, UntilStatement or ForStatement");
+                    myGenerate.reportError(nextToken, errorMessage("AssignmentStatement, IfStatement, WhileStatement, ProcedureStatement, UntilStatement or ForStatement", nextToken));
                     break;
             }
         }
@@ -393,6 +395,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         
         myGenerate.commenceNonterminal("ConditionalOperator");
 
+        //|
         switch(nextToken.symbol)
         {
             //>
