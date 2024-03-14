@@ -13,7 +13,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
    
     private String errorMessage(String expectedTokens, Token token)
     {
-        return "line " + token.lineNumber + " from " + filename.substring(filename.lastIndexOf('/') + 1) + ": Expected " + expectedTokens + " but found (" + Token.getName(token.symbol) + ").\n";
+        return "line " + token.lineNumber + " from " + filename.substring(filename.lastIndexOf("'\'") + 1) + ": Expected " + expectedTokens + " but found (" + Token.getName(token.symbol) + ").\n";
     }
 
     @Override
