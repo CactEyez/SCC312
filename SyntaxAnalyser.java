@@ -67,7 +67,7 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
             acceptTerminal(Token.semicolonSymbol);
 
             //<statement>
-            try{statement();}
+            try{statementList();}
             catch(CompilationException ex)
             {throw new CompilationException(errorMessage("Statement", nextToken), ex);}
         }
@@ -176,16 +176,20 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
         {throw new CompilationException(errorMessage("StatementList", nextToken), ex);}
 
         //else
-        acceptTerminal(Token.elseSymbol);
+        if(nextToken.symbol == Token.elseSymbol)
+        {
+            acceptTerminal(Token.elseSymbol);
 
-        //<statement list>
-        try{statementList();}
-        catch(CompilationException ex)
-        {throw new CompilationException(errorMessage("StatementList", nextToken), ex);}
+            //<statement list>
+            try{statementList();}
+            catch(CompilationException ex)
+            {throw new CompilationException(errorMessage("StatementList", nextToken), ex);}
+        }
 
         //end
         acceptTerminal(Token.endSymbol);
 
+        //if
         acceptTerminal(Token.ifSymbol);
 
         myGenerate.finishNonterminal("IfStatement");
@@ -466,8 +470,8 @@ public class SyntaxAnalyser extends AbstractSyntaxAnalyser
             //*|/
             acceptTerminal(nextToken.symbol);
 
-            //<factor
-            try{factor();}
+            //<factor>
+            try{term();}
             catch(CompilationException ex)
             {throw new CompilationException(errorMessage("Factor", nextToken), ex);}
         }
